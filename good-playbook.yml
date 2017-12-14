@@ -1,0 +1,32 @@
+- name: configure repos
+  hosts: all
+  gather_facts: false # remove later! speeds up testing
+  become: true
+
+  tasks:
+  - name: enable repos
+    template:
+      src: ./open_three-tier-app.repo
+      dest: /etc/yum.repos.d/open_three-tier-app.repo
+      mode: 0644
+
+- name: deploy frontends
+  hosts: frontends
+  gather_facts: false
+  become: true
+  roles:
+    - { role: "./roles/frontends" }
+
+- name: deploy apps
+  hosts: apps
+  gather_facts: false
+  become: true
+  roles:
+    - { role: "./roles/apps" }
+
+- name: deploy appdbs
+  hosts: appdbs
+  gather_facts: false
+  become: true
+  roles:
+    - { role: "./roles/appdbs" }
